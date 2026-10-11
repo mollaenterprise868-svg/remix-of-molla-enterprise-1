@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import mollaLogo from "@/assets/molla-logo.jpg.asset.json";
+import mollaLogoUrl from "@/assets/molla-logo.jpg";
 import { ThemeToggle } from "@/components/molla/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
