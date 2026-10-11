@@ -166,13 +166,21 @@ function TillPage() {
   }
 
   function addByCode(code: string) {
+    const q = code.trim().toLowerCase();
     const hit =
-      catalogue.find((p) => (p.barcode ?? "").toLowerCase() === code.toLowerCase()) ??
-      catalogue.find((p) => (p.sku ?? "").toLowerCase() === code.toLowerCase());
-    if (!hit) {
-      toast.error(`No product with barcode or number ${code}`);
-    } else {
+      catalogue.find((p) => (p.barcode ?? "").toLowerCase() === q) ??
+      catalogue.find((p) => (p.sku ?? "").toLowerCase() === q);
+    if (hit) {
       addProduct(hit);
+    } else {
+      // No exact match — show every product with a similar number or name.
+      const similar = catalogue.filter((p) => matchesSearch(p, code));
+      if (similar.length > 0) {
+        setSearch(code);
+        toast.info(`No exact match for ${code} — ${similar.length} similar item${similar.length === 1 ? "" : "s"} below, tap to add`);
+      } else {
+        toast.error(`No product with barcode or number ${code}`);
+      }
     }
     setScan("");
     scanRef.current?.focus();
