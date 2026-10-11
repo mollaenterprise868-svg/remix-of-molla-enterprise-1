@@ -318,10 +318,16 @@ function TillPage() {
             </Button>
             <CameraScanner
               onDetected={(code) => {
-                setSearch(code);
-                const found = catalogue.some((p) => matchesSearch(p, code));
-                if (found) toast.success(`Found item for ${code} — tap it to add`);
-                else toast.error(`Not found: ${code}`);
+                const hit =
+                  catalogue.find((p) => (p.barcode ?? "").toLowerCase() === code.toLowerCase()) ??
+                  catalogue.find((p) => (p.sku ?? "").toLowerCase() === code.trim().toLowerCase());
+                if (hit) {
+                  addProduct(hit);
+                  toast.success(`Added ${hit.name}`);
+                } else {
+                  setSearch(code);
+                  toast.error(`Not found: ${code}`);
+                }
               }}
             />
           </form>
