@@ -50,9 +50,40 @@ function ScannerView({ onDetected }: { onDetected: (code: string) => void }) {
   useEffect(() => {
     let stopped = false;
     let controls: { stop: () => void } | undefined;
+    let permissionStream: MediaStream | undefined;
 
     (async () => {
       try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setError(
+            "This browser cannot open the camera. Open the app in Chrome or Safari on the phone.",
+          );
+          return;
+        }
+        // Ask for the camera up front so the permission prompt always appears.
+        try {
+          permissionStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" },
+          });
+        } catch (permError) {
+          if (stopped) return;
+          const name = (permError as DOMException)?.name;
+          if (name === "NotAllowedError" || name === "SecurityError") {
+            setError(
+              "Camera access is blocked. Tap the lock/tune icon next to the address bar, allow Camera for this site, then try again.",
+            );
+          } else if (name === "NotFoundError" || name === "OverconstrainedError") {
+            setError("No camera was found on this device.");
+          } else {
+            setError("The camera could not be opened. Close other apps using the camera and try again.");
+          }
+          return;
+        }
+        // Permission granted — release the probe stream; the reader opens its own.
+        permissionStream.getTracks().forEach((t) => t.stop());
+        permissionStream = undefined;
+        if (stopped) return;
+
         const { BrowserMultiFormatReader } = await import("@zxing/browser");
         const reader = new BrowserMultiFormatReader();
         const video = videoRef.current;
@@ -93,6 +124,7 @@ function ScannerView({ onDetected }: { onDetected: (code: string) => void }) {
       } catch {
         // already stopped
       }
+      permissionStream?.getTracks().forEach((t) => t.stop());
     };
   }, []);
 
