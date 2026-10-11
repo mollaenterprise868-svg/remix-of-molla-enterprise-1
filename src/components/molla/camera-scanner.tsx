@@ -124,6 +124,7 @@ function ScannerView({ onDetected }: { onDetected: (code: string) => void }) {
       } catch {
         // already stopped
       }
+      permissionStream?.getTracks().forEach((t) => t.stop());
     };
   }, []);
 
