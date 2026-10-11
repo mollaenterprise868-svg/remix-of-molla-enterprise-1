@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import mollaLogo from "@/assets/molla-logo.jpg.asset.json";
+import mollaLogoUrl from "@/assets/molla-logo.jpg";
 import { ThemeToggle } from "@/components/molla/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,7 +78,7 @@ function SignIn() {
       </div>
       <header className="text-center">
         <img
-          src={mollaLogo.url}
+          src={mollaLogoUrl}
           alt="Molla Enterprise logo"
           className="mx-auto mb-4 size-20 rounded-2xl object-cover"
         />

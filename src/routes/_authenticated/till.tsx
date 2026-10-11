@@ -114,12 +114,13 @@ function TillPage() {
     queryKey: ["my-sales-today"],
     queryFn: async () => {
       const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return [];
       const since = new Date();
       since.setHours(0, 0, 0, 0);
       const { data, error } = await supabase
         .from("sales")
         .select("id,receipt_no,total,item_count,payment_method,customer_number,agent_code,created_at")
-        .eq("worker_user_id", user.user?.id ?? "")
+        .eq("worker_user_id", user.user.id)
         .gte("created_at", since.toISOString())
         .order("created_at", { ascending: false });
       if (error) throw error;
