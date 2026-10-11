@@ -78,7 +78,7 @@ function SignIn() {
       </div>
       <header className="text-center">
         <img
-          src={mollaLogo.url}
+          src={mollaLogoUrl}
           alt="Molla Enterprise logo"
           className="mx-auto mb-4 size-20 rounded-2xl object-cover"
         />
